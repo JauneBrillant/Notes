@@ -1,61 +1,64 @@
-//
-//  ContentView.swift
-//  nudge
-//
-//  Created by takahiro hagiuda on 2025/03/04.
-//
-
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Query(sort: \ItemModel.order, order: .forward) private var items: [ItemModel]
+    @State private var selectedItem: ItemModel?
+    @State private var isShowingSheet = false
 
     var body: some View {
-        NavigationSplitView {
+        NavigationStack {
             List {
                 ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+                    HStack {
+                        Image(
+                            systemName:
+                                "\((item.order + 1) % 50).circle\(item.isActive ? ".fill" : "")")
+                        Text(item.sentence)
+                            .onTapGesture {
+                                selectedItem = item
+                                isShowingSheet = true
+                            }
                     }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 0))
+                    .listRowSeparator(.hidden)
                 }
+                .onMove(perform: moveItems)
                 .onDelete(perform: deleteItems)
             }
+            .listStyle(.plain)
+            .navigationTitle("ITEMS")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(.white)
+            .scrollContentBackground(.hidden)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+                    Button {
+                    } label: {
+                        Image(systemName: "plus")
                     }
                 }
             }
-        } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+            .sheet(item: $selectedItem) { item in
+                EditView(item: item)
             }
         }
     }
-}
 
-#Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+    private func moveItems(from source: IndexSet, to destination: Int) {
+        var itemsToUpdate = items
+        itemsToUpdate.move(fromOffsets: source, toOffset: destination)
+
+        for (index, item) in itemsToUpdate.enumerated() {
+            item.order = index
+        }
+    }
+
+    private func deleteItems(at offsets: IndexSet) {
+        for index in offsets {
+            let item = items[index]
+            modelContext.delete(item)
+        }
+    }
 }

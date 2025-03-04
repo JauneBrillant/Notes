@@ -1,0 +1,16 @@
+[
+  {
+    "label": "watch and build",
+    "command": "fswatch --include '.*\\.swift$' --exclude '.*' nudge | xargs -n1 -I{} zsh -c 'xcodebuild -scheme nudge -destination \"platform=iOS Simulator,name=iPhone 16 Pro\" -configuration Debug -derivedDataPath ./build build && xcrun simctl install booted ./build/Build/Products/Debug-iphonesimulator/nudge.app && xcrun simctl launch booted dev.ox.nudge'",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  },
+  {
+    "label": "clean and watch, build",
+    "command": "fswatch --include '.*\\.swift$' --exclude '.*' nudge | xargs -n1 -I{} zsh -c 'xcrun simctl uninstall booted dev.ox.nudge && xcodebuild -scheme nudge -destination \"platform=iOS Simulator,name=iPhone 16 Pro\" -configuration Debug -derivedDataPath ./build build && xcrun simctl install booted ./build/Build/Products/Debug-iphonesimulator/nudge.app && xcrun simctl launch booted dev.ox.nudge'",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  }
+]
