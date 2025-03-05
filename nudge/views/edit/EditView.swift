@@ -8,6 +8,7 @@ struct EditView: View {
             List {
                 Section(header: Text("Sentence")) {
                     TextField("Enter text", text: $item.sentence)
+                        .lineLimit(nil)
                 }
 
                 Section(header: Text("Notifications")) {

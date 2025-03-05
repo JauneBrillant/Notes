@@ -50,6 +50,11 @@ private func addInitialData(to container: ModelContainer) async {
                     sentence:
                         "Every action you take is a vote for the type of person you wish to become.",
                     order: 2),
+                ItemModel(
+                    sentence:
+                        "If you’re not doing some things that are crazy, then you’re doing the wrong things.",
+                    order: 3
+                ),
             ]
 
             for item in initialItems {

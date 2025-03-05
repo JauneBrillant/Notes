@@ -1,17 +1,19 @@
 import SwiftUI
 
 struct MainView: View {
+    @State private var isBouncing: Bool = false
+
     var body: some View {
         TabView {
             Group {
-                HomeView()
+                LeftView()
                     .tabItem {
-                        Image(systemName: "circle")
+                        Image(systemName: "minus")
                     }
 
-                ContentView()
+                RightView()
                     .tabItem {
-                        Image(systemName: "scribble.variable")
+                        Image(systemName: "equal")
                     }
             }
             .toolbarBackground(.white, for: .tabBar)

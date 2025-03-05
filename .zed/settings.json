@@ -1,0 +1,13 @@
+{
+  "file_scan_exclusions": [
+    ".git",
+    "build",
+    "*.xcodeproj",
+    "*Assets.xcassets",
+    "Preview Content",
+    "**/nudge.entitlements",
+    "**/Info.plist",
+    "buildServer.json",
+    "DS_Store"
+  ]
+}
