@@ -6,40 +6,27 @@ struct RightView: View {
     @Query(sort: \ItemModel.order, order: .forward) private var items: [ItemModel]
     @State private var selectedItem: ItemModel?
     @State private var isShowingEditSheet = false
-    @State private var showMenu = false
+    @State private var showSideMenu = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                List {
-                    ForEach(items) { item in
-                        ItemRow(
-                            item: item,
-                            onTap: {
-                                selectedItem = item
-                                isShowingEditSheet = true
-                            })
-                    }
-                    .onMove(perform: moveItems)
-                    .onDelete(perform: deleteItems)
+        ZStack {
+            List {
+                ForEach(items) { item in
+                    ItemRow(
+                        item: item,
+                        onTap: {
+                            selectedItem = item
+                            isShowingEditSheet = true
+                        })
                 }
-                .listStyle(.plain)
-                .navigationTitle("ITEMS")
-                .navigationBarTitleDisplayMode(.large)
-                .toolbarBackground(.white)
-                .scrollContentBackground(.hidden)
-
-                SideMenuView(isShowing: $showMenu)
+                .onMove(perform: moveItems)
+                .onDelete(perform: deleteItems)
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showMenu.toggle()
-                    } label: {
-                        Image(systemName: "line.3.horizontal")
-                    }
-                }
-            }
+            .listStyle(.plain)
+            .navigationTitle("ITEMS")
+            .navigationBarTitleDisplayMode(.large)
+            //.toolbarBackground(.white)
+            .scrollContentBackground(.hidden)
         }
         .sheet(item: $selectedItem) { item in
             EditView(item: item)

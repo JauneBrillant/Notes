@@ -13,7 +13,7 @@ struct HorizontalScrollView: View {
                         Text(item.sentence)
                             .font(.title2)
                             .bold()
-                            .padding()
+                            .padding(.bottom)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .onTapGesture {

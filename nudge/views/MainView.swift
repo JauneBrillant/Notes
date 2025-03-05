@@ -1,23 +1,57 @@
 import SwiftUI
 
 struct MainView: View {
-    @State private var isBouncing: Bool = false
+    @State private var showSideMenu = false
+    @State private var selectedTab = 0
 
     var body: some View {
-        TabView {
-            Group {
-                LeftView()
-                    .tabItem {
-                        Image(systemName: "minus")
-                    }
+        ZStack(alignment: .leading) {
+            TabView(selection: $selectedTab) {
+                NavigationStack {
+                    LeftView()
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button(
+                                    action: {
+                                        showSideMenu.toggle()
+                                    },
+                                    label: {
+                                        Image(systemName: "line.3.horizontal")
+                                    }
+                                )
+                            }
+                        }
+                }
+                .tabItem {
+                    Image(systemName: "minus")
+                }
 
-                RightView()
-                    .tabItem {
-                        Image(systemName: "equal")
-                    }
+                NavigationStack {
+                    RightView()
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button(
+                                    action: {
+                                        showSideMenu.toggle()
+                                    },
+                                    label: {
+                                        Image(systemName: "line.3.horizontal")
+                                    }
+                                )
+                            }
+                        }
+                        .navigationTitle("ITEMS")
+                        .navigationBarTitleDisplayMode(.large)
+                        .toolbarBackground(.white)
+                        .toolbarBackground(.white, for: .tabBar)
+                }
+                .tabItem {
+                    Image(systemName: "equal")
+                }
             }
-            .toolbarBackground(.white, for: .tabBar)
+            .tint(.black)
+
+            SideMenuView(isShowing: $showSideMenu)
         }
-        .accentColor(.black)
     }
 }
