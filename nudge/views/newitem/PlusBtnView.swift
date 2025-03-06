@@ -11,10 +11,8 @@ struct PlusBtnView: View {
                 Button(action: {
                     isShowing = true
                 }) {
-                    Image(systemName: "plus.circle.fill")
-                        .resizable()
-                        .frame(width: 35, height: 35)
-                        .foregroundColor(.black)
+                    Image(systemName: "plus.circle")
+                        .font(.title)
                 }
                 .padding(.trailing, 40)
                 .padding(.bottom, 40)

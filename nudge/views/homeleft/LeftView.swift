@@ -7,7 +7,7 @@ struct LeftView: View {
 
     var body: some View {
         ZStack {
-            HorizontalScrollView()
+            HorizontalScrollView(selectedItem: $selectedItem)
             PlusBtnView(isShowing: $showAddItem)
         }
         .sheet(item: $selectedItem) { item in
@@ -18,5 +18,3 @@ struct LeftView: View {
         }
     }
 }
-
-

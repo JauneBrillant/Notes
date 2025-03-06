@@ -17,16 +17,30 @@ struct RightView: View {
                         onTap: {
                             selectedItem = item
                             isShowingEditSheet = true
-                        })
+                        }
+                    )
+                    .listRowSeparator(.hidden)
                 }
                 .onMove(perform: moveItems)
                 .onDelete(perform: deleteItems)
             }
             .listStyle(.plain)
-            .navigationTitle("ITEMS")
-            .navigationBarTitleDisplayMode(.large)
-            //.toolbarBackground(.white)
             .scrollContentBackground(.hidden)
+            //.background(Color(.systemGroupedBackground))  // リストの背景色を統一
+            //List {
+            //    ForEach(items) { item in
+            //        ItemRow(
+            //            item: item,
+            //            onTap: {
+            //                selectedItem = item
+            //                isShowingEditSheet = true
+            //            })
+            //    }
+            //    .onMove(perform: moveItems)
+            //    .onDelete(perform: deleteItems)
+            //}
+            //.listStyle(.plain)
+            //.scrollContentBackground(.hidden)
         }
         .sheet(item: $selectedItem) { item in
             EditView(item: item)
@@ -56,10 +70,8 @@ struct ItemRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: "app.fill")
-                .font(.system(size: 5))
-                .frame(width: 5, height: 5)
-                .foregroundColor(.primary)
+            Image(systemName: "circle")
+                .font(.system(size: 8))
 
             Text(item.sentence)
                 .bold()
@@ -68,9 +80,17 @@ struct ItemRow: View {
                 .padding(.vertical, 4)
                 .contentShape(Rectangle())
                 .onTapGesture(perform: onTap)
+                .foregroundColor(.black.opacity(0.9))
         }
-        .padding(.vertical, 8)
-        .listRowInsets(EdgeInsets(top: 0, leading: 18, bottom: 0, trailing: 20))
-        .listRowSeparator(.hidden)
+        .padding(12)
+        .background(Color.white)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.black, lineWidth: 2)
+        )
+        .cornerRadius(12)
+        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 2)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 4)
     }
 }

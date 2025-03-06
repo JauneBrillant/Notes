@@ -1,6 +1,24 @@
 import SwiftData
 import SwiftUI
 
+struct CustomBorderedButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 16, weight: .bold))
+            .foregroundColor(.black)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.black, lineWidth: 2)
+            )
+            .background(Color.white)
+            .cornerRadius(12)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
+    }
+}
+
 struct AddNewItemView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [ItemModel]
@@ -16,22 +34,29 @@ struct AddNewItemView: View {
             Spacer()
 
             VStack(spacing: 20) {
-                TextField("Add: New Sentence", text: $newSentence)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                TextField("sentence", text: $newSentence)
+                    .padding(10)
+                    .background(Color.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.black, lineWidth: 2)
+                    )
+                    .cornerRadius(8)
                     .padding(.horizontal)
 
                 HStack {
-                    Button("Cancel") {
+                    Button("×") {
                         newSentence = ""
                         isShowing = false
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(CustomBorderedButtonStyle())
 
                     Button("Save") {
                         addItem()
                         isShowing = false
                     }
-                    .buttonStyle(.bordered)
+                    .bold()
+                    .buttonStyle(CustomBorderedButtonStyle())
                     .disabled(newSentence.isEmpty)
                 }
             }

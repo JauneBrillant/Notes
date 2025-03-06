@@ -3,7 +3,7 @@ import SwiftUI
 
 struct HorizontalScrollView: View {
     @Query private var items: [ItemModel]
-    @State var selectedItem: ItemModel?
+    @Binding var selectedItem: ItemModel?
 
     var body: some View {
         ScrollView(.horizontal) {
@@ -14,6 +14,7 @@ struct HorizontalScrollView: View {
                             .font(.title2)
                             .bold()
                             .padding(.bottom)
+                            .foregroundStyle(.black.opacity(0.9))
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .onTapGesture {

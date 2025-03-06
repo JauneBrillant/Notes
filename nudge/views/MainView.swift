@@ -17,8 +17,11 @@ struct MainView: View {
                                     },
                                     label: {
                                         Image(systemName: "line.3.horizontal")
+                                            .resizable()
+                                            .frame(width: 18, height: 15)
                                     }
                                 )
+                                .padding(.trailing, 5)
                             }
                         }
                 }
@@ -36,8 +39,11 @@ struct MainView: View {
                                     },
                                     label: {
                                         Image(systemName: "line.3.horizontal")
+                                            .resizable()
+                                            .frame(width: 18, height: 15)
                                     }
                                 )
+                                .padding(.trailing, 5)
                             }
                         }
                         .navigationTitle("ITEMS")
