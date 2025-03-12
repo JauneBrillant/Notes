@@ -1,15 +1,17 @@
 import SwiftUI
 
 struct SideMenuView: View {
-    @Binding var isShowing: Bool
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) var dismiss
+
+    @Binding var isShowing: Bool
     @State private var showNotificationSettings = false
 
     var body: some View {
         ZStack(alignment: .leading) {
             if isShowing {
-                Color.black
-                    .opacity(0.3)
+                (colorScheme == .light ? Color.black : Color.gray)
+                    .opacity(colorScheme == .light ? 0.4 : 0.3)
                     .ignoresSafeArea(.all)
                     .onTapGesture {
                         withAnimation(.easeInOut) {
@@ -19,7 +21,7 @@ struct SideMenuView: View {
 
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 20) {
-                        Text("Nudge")
+                        Text("Notes")
                             .font(.title)
                             .bold()
 
@@ -30,19 +32,20 @@ struct SideMenuView: View {
                     }
                     .padding()
                     .frame(width: 220)
-                    .background(Color.white)
+                    .background(colorScheme == .light ? .white : .black)
                     .offset(x: isShowing ? 0 : -280)
                     .animation(.easeInOut, value: isShowing)
 
                     Spacer()
                 }
+                .padding(.top, 62)
                 .transition(.move(edge: .leading))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.vertical)
         .sheet(isPresented: $showNotificationSettings) {
-            NotificationView(isPresented: $showNotificationSettings)
+            NotificationView()
         }
     }
 
@@ -102,4 +105,8 @@ struct SideMenuView: View {
             .padding(.vertical, 4)
         }
     }
+}
+
+#Preview {
+    SideMenuView(isShowing: .constant(true))
 }

@@ -3,8 +3,8 @@ import SwiftUI
 import UserNotifications
 
 struct NotificationView: View {
+    @Environment(\.dismiss) private var dismiss
     @Query private var items: [ItemModel]
-    @Binding var isPresented: Bool
     @State private var isNotificationsEnabled = false
     @State private var showTimePicker = false
     @AppStorage("remindTime") private var selectedTime = Date()
@@ -54,7 +54,7 @@ struct NotificationView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
-                        isPresented = false
+                        dismiss()
                     }
                 }
             }

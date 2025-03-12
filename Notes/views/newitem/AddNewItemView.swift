@@ -64,7 +64,7 @@ struct AddNewItemView: View {
             Spacer()
         }
         .presentationDetents([.height(200)])
-        .tint(.black)
+        .tint(.primary)
     }
 
     private func addItem() {

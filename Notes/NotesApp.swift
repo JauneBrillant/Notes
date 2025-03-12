@@ -2,7 +2,7 @@ import SwiftData
 import SwiftUI
 
 @main
-struct nudgeApp: App {
+struct NotesApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     let sharedModelContainer: ModelContainer = {
@@ -10,7 +10,7 @@ struct nudgeApp: App {
             ItemModel.self
         ])
 
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
 
         do {
             let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
@@ -58,6 +58,7 @@ private func addInitialData(to container: ModelContainer) async {
             ]
 
             for item in initialItems {
+                item.nextReviewDate = Date()
                 context.insert(item)
             }
 

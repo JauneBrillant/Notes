@@ -17,6 +17,7 @@ struct PlusBtnView: View {
                 .padding(.trailing, 40)
                 .padding(.bottom, 40)
             }
+            .foregroundStyle(.primary)
         }
     }
 }
