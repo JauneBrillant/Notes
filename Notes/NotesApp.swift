@@ -4,67 +4,83 @@ import SwiftUI
 @main
 struct NotesApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @State private var dataInitialized = false
 
     let sharedModelContainer: ModelContainer = {
         let schema = Schema([
             ItemModel.self
         ])
 
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-
         do {
-            let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let modelConfiguration = ModelConfiguration(
+                schema: schema,
+                isStoredInMemoryOnly: false
+            )
 
+            let container = try ModelContainer(
+                for: schema,
+                configurations: [modelConfiguration]
+            )
             return container
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            print("SwiftData Error: \(error)")
+
+            do {
+                let fallbackConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+                return try ModelContainer(for: schema, configurations: [fallbackConfig])
+            } catch {
+                print("Even in-memory container failed: \(error)")
+                fatalError("Could not create ModelContainer: \(error)")
+            }
         }
     }()
 
     var body: some Scene {
         WindowGroup {
-            MainView()
-                .onAppear {
-                    Task {
+            if dataInitialized {
+                MainView()
+            } else {
+                // Show a loading screen or progress indicator
+                ProgressView("Initializing...")
+                    .task {
                         await addInitialData(to: sharedModelContainer)
+                        dataInitialized = true
                     }
-                }
+            }
         }
         .modelContainer(sharedModelContainer)
     }
-}
 
-private func addInitialData(to container: ModelContainer) async {
-    let context = ModelContext(container)
-    var descriptor = FetchDescriptor<ItemModel>()
-    descriptor.fetchLimit = 1
+    private func addInitialData(to container: ModelContainer) async {
+        let context = ModelContext(container)
+        var descriptor = FetchDescriptor<ItemModel>()
+        descriptor.fetchLimit = 1
 
-    do {
-        let existingItems = try context.fetch(descriptor)
-        if existingItems.isEmpty {
-            let initialItems = [
-                ItemModel(sentence: "Less is more.", order: 0),
-                ItemModel(
-                    sentence: "Success is doing ordinary things extraordinarily well.", order: 1),
-                ItemModel(
-                    sentence:
-                        "Every action you take is a vote for the type of person you wish to become.",
-                    order: 2),
-                ItemModel(
-                    sentence:
-                        "If you’re not doing some things that are crazy, then you’re doing the wrong things.",
-                    order: 3
-                ),
-            ]
+        do {
+            let existingItems = try context.fetch(descriptor)
+            if existingItems.isEmpty {
+                let today = Calendar.current.startOfDay(for: Date())
 
-            for item in initialItems {
-                item.nextReviewDate = Date()
-                context.insert(item)
+                let initialItems = [
+                    ItemModel(sentence: "item0.", order: 0),
+                    ItemModel(sentence: "item1", order: 1),
+                    ItemModel(sentence: "item2.", order: 2),
+                    ItemModel(sentence: "item3.", order: 3),
+                ]
+
+                for item in initialItems {
+                    item.nextReviewDate = today  // Ensure all items have today's date
+                    context.insert(item)
+                }
+
+                try context.save()
+                print("Initial data added successfully")
+
+                // Add a small delay to ensure the database is ready
+                try await Task.sleep(nanoseconds: 500_000_000)  // 0.5 seconds
             }
-
-            try context.save()
+        } catch {
+            print("Failed to check for or add initial data: \(error)")
         }
-    } catch {
-        print("Failed to check for or add initial data: \(error)")
     }
 }

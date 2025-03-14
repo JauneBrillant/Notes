@@ -1,7 +1,15 @@
 import SwiftUI
 
+struct EditViewWrapper: View {
+    @State var item: ItemModel
+
+    var body: some View {
+        EditView(item: $item)
+    }
+}
+
 struct EditView: View {
-    @Bindable var item: ItemModel
+    @Binding var item: ItemModel
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
@@ -56,6 +64,18 @@ struct EditView: View {
                                 .fontWeight(.bold)
                                 .foregroundStyle(.black.opacity(0.9))
                         }
+                        
+                        HStack {
+                            Text("Next Review")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.black.opacity(0.9))
+                                .frame(width: 100, alignment: .leading)
+                            Text(formatDate(item.nextReviewDate))
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.black.opacity(0.9))
+                        }
                     }
                     .padding(.leading)
                 }
@@ -80,12 +100,12 @@ struct EditView: View {
     }
 }
 
-#Preview {
-    let previewItem = ItemModel(
-        sentence:
-            "Every action you take is a vote for the type of person you wish to become.",
-        order: 2)
-    previewItem.createdAt = Date()
-    previewItem.cnt = 3
-    return EditView(item: previewItem)
-}
+//#Preview {
+//    let previewItem = ItemModel(
+//        sentence:
+//            "Every action you take is a vote for the type of person you wish to become.",
+//        order: 2)
+//    previewItem.createdAt = Date()
+//    previewItem.cnt = 3
+//    return EditView(item: previewItem)
+//}

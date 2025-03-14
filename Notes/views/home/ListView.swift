@@ -4,15 +4,18 @@ import SwiftUI
 struct ListView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [ItemModel]
+    @StateObject private var viewModel = ListViewModel()
+    @Binding var showSideMenu: Bool
     @State private var selectedItem: ItemModel?
 
-    @Binding var showSideMenu: Bool
+    init(showSideMenu: Binding<Bool>) {
+        _showSideMenu = showSideMenu
+    }
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(items) { item in
+                ForEach(viewModel.items) { item in
                     ItemRow(
                         item: item,
                         onTap: {
@@ -21,8 +24,8 @@ struct ListView: View {
                     )
                     .listRowSeparator(.hidden)
                 }
-                .onMove(perform: moveItems)
-                .onDelete(perform: deleteItems)
+                .onMove(perform: viewModel.moveItems)
+                .onDelete(perform: viewModel.deleteItems)
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
@@ -31,7 +34,7 @@ struct ListView: View {
             .navigationBarTitleDisplayMode(.large)
             .toolbarBackground(colorScheme == .light ? .white : .black)
             .sheet(item: $selectedItem) { item in
-                EditView(item: item)
+                EditViewWrapper(item: item)
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -49,21 +52,8 @@ struct ListView: View {
                 }
             }
         }
-    }
-
-    private func moveItems(from source: IndexSet, to destination: Int) {
-        var itemsToUpdate = items
-        itemsToUpdate.move(fromOffsets: source, toOffset: destination)
-
-        for (index, item) in itemsToUpdate.enumerated() {
-            item.order = index
-        }
-    }
-
-    private func deleteItems(at offsets: IndexSet) {
-        for index in offsets {
-            let item = items[index]
-            modelContext.delete(item)
+        .onAppear {
+            viewModel.setModelContext(modelContext)
         }
     }
 }
@@ -97,33 +87,4 @@ struct ItemRow: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 4)
     }
-}
-
-#Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(
-        for: ItemModel.self, configurations: config)
-    let context = container.mainContext
-
-    let itemsData: [(sentence: String, order: Int)] = [
-        ("Less is more.", 0),
-        ("Success is doing ordinary things extraordinarily well.", 1),
-        (
-            "Every action you take is a vote for the type of person you wish to become.",
-            2
-        ),
-        ("First test item", 3),
-        ("First test item", 4),
-        ("Second test item", 5),
-        ("Second test item", 6),
-        ("Second test item", 7),
-    ]
-
-    for data in itemsData {
-        let item = ItemModel(sentence: data.sentence, order: data.order)
-        context.insert(item)
-    }
-
-    return ListView(showSideMenu: .constant(false))
-        .modelContainer(container)
 }

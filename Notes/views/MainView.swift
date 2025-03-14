@@ -2,11 +2,10 @@ import SwiftUI
 
 struct MainView: View {
     @State private var showSideMenu = false
-    @State private var selectedTab = 0
 
     var body: some View {
         ZStack {
-            TabView(selection: $selectedTab) {
+            TabView {
                 FilterOutView(showSideMenu: $showSideMenu)
                         .tabItem {
                             Image(systemName: "minus")

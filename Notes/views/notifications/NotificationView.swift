@@ -3,11 +3,21 @@ import SwiftUI
 import UserNotifications
 
 struct NotificationView: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Query private var items: [ItemModel]
+    @State private var items: [ItemModel] = []
     @State private var isNotificationsEnabled = false
     @State private var showTimePicker = false
     @AppStorage("remindTime") private var selectedTime = Date()
+
+    private func loadItems() {
+        do {
+            let descriptor = FetchDescriptor<ItemModel>()
+            items = try modelContext.fetch(descriptor)
+        } catch {
+            print("Failed to fetch items: \(error)")
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -59,6 +69,7 @@ struct NotificationView: View {
                 }
             }
             .onAppear {
+                loadItems()
                 checkNotificationStatus()
             }
         }

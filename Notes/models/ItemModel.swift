@@ -13,8 +13,7 @@ class ItemModel: Identifiable, Hashable {
         self.sentence = sentence
         self.order = order
         self.cnt = 0
-        self.nextReviewDate = Calendar.current.date(
-            byAdding: .day, value: 1, to: Date())!
+        self.nextReviewDate = Calendar.current.startOfDay(for: Date())
         self.createdAt = Date()
     }
 

@@ -1,29 +1,13 @@
 import SwiftData
 import SwiftUI
 
-struct CustomBorderedButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(size: 16, weight: .bold))
-            .foregroundColor(.black)
-            .padding(.vertical, 8)
-            .padding(.horizontal, 16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.black, lineWidth: 2)
-            )
-            .background(Color.white)
-            .cornerRadius(12)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
-    }
-}
-
 struct AddNewItemView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [ItemModel]
     @State private var newSentence = ""
     @Binding var isShowing: Bool
+
+    var onItemAdded: (() -> Void)?
 
     var body: some View {
         VStack {
@@ -49,14 +33,14 @@ struct AddNewItemView: View {
                         newSentence = ""
                         isShowing = false
                     }
-                    .buttonStyle(CustomBorderedButtonStyle())
+                    .buttonStyle(CustomButtonStyle())
 
                     Button("Save") {
                         addItem()
                         isShowing = false
                     }
                     .bold()
-                    .buttonStyle(CustomBorderedButtonStyle())
+                    .buttonStyle(CustomButtonStyle(width: 50))
                     .disabled(newSentence.isEmpty)
                 }
             }
@@ -72,6 +56,8 @@ struct AddNewItemView: View {
             let newItem = ItemModel(sentence: newSentence, order: items.count)
             modelContext.insert(newItem)
             newSentence = ""
+
+            onItemAdded?()
         }
     }
 }
