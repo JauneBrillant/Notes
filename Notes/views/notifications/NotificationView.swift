@@ -115,16 +115,16 @@ struct NotificationView: View {
         }
 
         let content = UNMutableNotificationContent()
-        content.title = "nudge"
+        content.title = "Notes"
         content.body = randomItem.sentence
         content.sound = .default
 
         let calendar = Calendar.current
         let dateComponents = calendar.dateComponents([.hour, .minute], from: selectedTime)
 
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
         let request = UNNotificationRequest(
-            identifier: "nudgeReminder", content: content, trigger: trigger)
+            identifier: UUID().uuidString, content: content, trigger: trigger)
 
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
@@ -137,8 +137,9 @@ struct NotificationView: View {
 
     private func scheduleNextDayNotification() {
         let nextDate = Calendar.current.date(byAdding: .day, value: 1, to: selectedTime) ?? Date()
+        let delay = nextDate.timeIntervalSinceNow
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + nextDate.timeIntervalSinceNow) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             self.scheduleNotification()
         }
     }

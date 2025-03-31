@@ -11,7 +11,6 @@ class FilterOutViewModel: ObservableObject {
     func setModelContext(_ context: ModelContext) {
         self.modelContext = context
         if !hasFetchedInitially {
-            // Delay the initial fetch slightly to ensure database is ready
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 self.fetchReviewItems()
                 self.hasFetchedInitially = true
@@ -27,11 +26,13 @@ class FilterOutViewModel: ObservableObject {
 
         do {
             let todayStartOfDay = Calendar.current.startOfDay(for: Date())
+            let todayEndOfDay = Calendar.current.date(byAdding: .second, value: -1, to: todayStartOfDay.addingTimeInterval(24 * 60 * 60)) ?? todayStartOfDay
 
             let descriptor = FetchDescriptor<ItemModel>(
                 predicate: #Predicate { item in
-                    item.nextReviewDate <= todayStartOfDay
+                    item.nextReviewDate <= todayEndOfDay
                 },
+                
                 sortBy: [
                     SortDescriptor(\.nextReviewDate, order: .forward),
                     SortDescriptor(\.order, order: .forward),
